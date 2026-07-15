@@ -15,7 +15,6 @@ async function connectToMongo() {
   return db
 }
 
-// Helper function to handle CORS
 function handleCORS(response) {
   response.headers.set('Access-Control-Allow-Origin', process.env.CORS_ORIGINS || '*')
   response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
@@ -24,12 +23,10 @@ function handleCORS(response) {
   return response
 }
 
-// OPTIONS handler for CORS
 export async function OPTIONS() {
   return handleCORS(new NextResponse(null, { status: 200 }))
 }
 
-// Route handler function
 async function handleRoute(request, { params }) {
   const { path = [] } = await params
   const route = `/${path.join('/')}`
@@ -38,65 +35,58 @@ async function handleRoute(request, { params }) {
   try {
     const db = await connectToMongo()
 
-    // Root endpoint - GET /api/root (since /api/ is not accessible with catch-all)
-    if (route === '/root' && method === 'GET') {
-      return handleCORS(NextResponse.json({ message: "Hello World" }))
-    }
-    // Root endpoint - GET /api/root (since /api/ is not accessible with catch-all)
-    if (route === '/' && method === 'GET') {
-      return handleCORS(NextResponse.json({ message: "Hello World" }))
+    if ((route === '/' || route === '/root') && method === 'GET') {
+      return handleCORS(NextResponse.json({ message: 'Portfolio API attiva' }))
     }
 
-    // Status endpoints - POST /api/status
-    if (route === '/status' && method === 'POST') {
+    // Contact messages - POST /api/messages
+    if (route === '/messages' && method === 'POST') {
       const body = await request.json()
-      
-      if (!body.client_name) {
-        return handleCORS(NextResponse.json(
-          { error: "client_name is required" }, 
-          { status: 400 }
-        ))
+
+      if (!body.name || !body.email || !body.message) {
+        return handleCORS(
+          NextResponse.json(
+            { error: 'Nome, email e messaggio sono obbligatori.' },
+            { status: 400 }
+          )
+        )
       }
 
-      const statusObj = {
+      const msg = {
         id: uuidv4(),
-        client_name: body.client_name,
-        timestamp: new Date()
+        name: String(body.name).slice(0, 200),
+        email: String(body.email).slice(0, 200),
+        message: String(body.message).slice(0, 5000),
+        createdAt: new Date().toISOString(),
       }
 
-      await db.collection('status_checks').insertOne(statusObj)
-      return handleCORS(NextResponse.json(statusObj))
+      await db.collection('messages').insertOne(msg)
+      return handleCORS(NextResponse.json({ success: true, id: msg.id }))
     }
 
-    // Status endpoints - GET /api/status
-    if (route === '/status' && method === 'GET') {
-      const statusChecks = await db.collection('status_checks')
+    // Contact messages - GET /api/messages
+    if (route === '/messages' && method === 'GET') {
+      const messages = await db
+        .collection('messages')
         .find({})
-        .limit(1000)
+        .sort({ createdAt: -1 })
+        .limit(500)
         .toArray()
-
-      // Remove MongoDB's _id field from response
-      const cleanedStatusChecks = statusChecks.map(({ _id, ...rest }) => rest)
-      
-      return handleCORS(NextResponse.json(cleanedStatusChecks))
+      const cleaned = messages.map(({ _id, ...rest }) => rest)
+      return handleCORS(NextResponse.json(cleaned))
     }
 
-    // Route not found
-    return handleCORS(NextResponse.json(
-      { error: `Route ${route} not found` }, 
-      { status: 404 }
-    ))
-
+    return handleCORS(
+      NextResponse.json({ error: `Route ${route} not found` }, { status: 404 })
+    )
   } catch (error) {
     console.error('API Error:', error)
-    return handleCORS(NextResponse.json(
-      { error: "Internal server error" }, 
-      { status: 500 }
-    ))
+    return handleCORS(
+      NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    )
   }
 }
 
-// Export all HTTP methods
 export const GET = handleRoute
 export const POST = handleRoute
 export const PUT = handleRoute

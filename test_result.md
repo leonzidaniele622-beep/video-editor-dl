@@ -101,3 +101,40 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: "Portfolio premium per Daniele Leonzi (Video Editor/Videomaker). Enhancement: pagine dedicate progetti, form contatti funzionante con MongoDB, micro-interazioni."
+
+backend:
+  - task: "Contact messages API (POST/GET /api/messages)"
+    implemented: true
+    working: true
+    file: "/app/app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        -working: "NA"
+        -agent: "main"
+        -comment: "Added POST /api/messages (validates name/email/message, stores in 'messages' collection with uuid id + createdAt) and GET /api/messages (returns list, _id stripped). Also GET /api/root returns health message. Needs testing for validation (400 on missing fields), successful insert (200 + success:true + id), and retrieval."
+        -working: true
+        -agent: "testing"
+        -comment: "All backend API tests passed (4/4). Test results: 1) GET /api/root returns 200 with {message: 'Portfolio API attiva'}. 2) POST /api/messages with valid data returns 200 with {success:true, id:<uuid>}. 3) POST /api/messages with missing fields returns 400 with {error: 'Nome, email e messaggio sono obbligatori.'}. 4) GET /api/messages returns 200 with array containing created message with fields [id, name, email, message, createdAt] and no _id field. All endpoints working correctly."
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Contact messages API (POST/GET /api/messages)"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+    -agent: "main"
+    -message: "Please test the messages API only. Base path is /api. Test: 1) POST /api/messages with valid {name,email,message} -> expect 200 and {success:true, id}. 2) POST with missing fields -> expect 400. 3) GET /api/messages -> expect array containing the created message without _id. 4) GET /api/root -> expect 200 health message. Do NOT test frontend."
+    -agent: "testing"
+    -message: "Backend testing complete. All 4 API tests passed successfully. The contact messages API is fully functional: health check works, POST validation works (returns 400 for missing fields), message creation works (returns 200 with success:true and uuid), and message retrieval works (returns array with proper fields, no _id). Created backend_test.py for future testing. Ready for main agent to summarize and finish."
