@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
@@ -10,6 +11,50 @@ import {
   ACCENT,
   CATEGORY_ICON,
 } from '@/lib/portfolio'
+
+function InstagramEmbeds({ items }) {
+  useEffect(() => {
+    const process = () => {
+      if (window.instgrm && window.instgrm.Embeds) {
+        window.instgrm.Embeds.process()
+      }
+    }
+    if (window.instgrm) {
+      process()
+    } else if (!document.getElementById('instagram-embed-script')) {
+      const s = document.createElement('script')
+      s.id = 'instagram-embed-script'
+      s.src = 'https://www.instagram.com/embed.js'
+      s.async = true
+      s.onload = process
+      document.body.appendChild(s)
+    } else {
+      const t = setTimeout(process, 800)
+      return () => clearTimeout(t)
+    }
+  }, [items])
+
+  return (
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {items.map((code) => (
+        <blockquote
+          key={code}
+          className="instagram-media"
+          data-instgrm-permalink={`https://www.instagram.com/p/${code}/`}
+          data-instgrm-version="14"
+          style={{
+            background: '#111',
+            border: 0,
+            borderRadius: 12,
+            margin: 0,
+            width: '100%',
+            minWidth: 0,
+          }}
+        />
+      ))}
+    </div>
+  )
+}
 
 export default function ProjectPage() {
   const params = useParams()
@@ -70,45 +115,56 @@ export default function ProjectPage() {
           </h1>
         </motion.div>
 
-        {/* Video */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-          className={`mt-10 overflow-hidden rounded-3xl border border-white/10 bg-black ${
-            isPortrait ? 'mx-auto max-w-sm' : ''
-          }`}
-        >
-          <div
-            className={`relative w-full ${
-              isPortrait ? 'aspect-[9/16]' : 'aspect-video'
+        {/* Media */}
+        {project.instagram ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="mt-10"
+          >
+            <InstagramEmbeds items={project.instagram} />
+          </motion.div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            className={`mt-10 overflow-hidden rounded-3xl border border-white/10 bg-black ${
+              isPortrait ? 'mx-auto max-w-sm' : ''
             }`}
           >
-            {project.youtube ? (
-              <iframe
-                className="absolute inset-0 h-full w-full"
-                src={`https://www.youtube.com/embed/${project.youtube}?rel=0&modestbranding=1`}
-                title={project.title}
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-              />
-            ) : (
-              <video
-                className="h-full w-full object-cover"
-                controls
-                autoPlay
-                muted
-                loop
-                playsInline
-                poster={project.image}
-                preload="metadata"
-              >
-                <source src={project.video || PROJECT_VIDEO} type="video/mp4" />
-              </video>
-            )}
-          </div>
-        </motion.div>
+            <div
+              className={`relative w-full ${
+                isPortrait ? 'aspect-[9/16]' : 'aspect-video'
+              }`}
+            >
+              {project.youtube ? (
+                <iframe
+                  className="absolute inset-0 h-full w-full"
+                  src={`https://www.youtube.com/embed/${project.youtube}?rel=0&modestbranding=1`}
+                  title={project.title}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
+              ) : (
+                <video
+                  className="h-full w-full object-cover"
+                  controls
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  poster={project.image}
+                  preload="metadata"
+                >
+                  <source src={project.video || PROJECT_VIDEO} type="video/mp4" />
+                </video>
+              )}
+            </div>
+          </motion.div>
+        )}
 
         {/* Content grid */}
         <div className="mt-12 grid grid-cols-1 gap-12 lg:grid-cols-3">
