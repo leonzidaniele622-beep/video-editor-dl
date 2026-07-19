@@ -34,6 +34,7 @@ export default function ProjectPage() {
 
   const Icon = CATEGORY_ICON[project.category] || Film
   const next = PROJECTS[(index + 1) % PROJECTS.length]
+  const isPortrait = project.orientation === 'portrait'
 
   return (
     <main className="min-h-screen bg-[#0B0B0B] text-white">
@@ -74,9 +75,15 @@ export default function ProjectPage() {
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-10 overflow-hidden rounded-3xl border border-white/10 bg-black"
+          className={`mt-10 overflow-hidden rounded-3xl border border-white/10 bg-black ${
+            isPortrait ? 'mx-auto max-w-sm' : ''
+          }`}
         >
-          <div className="relative aspect-video w-full">
+          <div
+            className={`relative w-full ${
+              isPortrait ? 'aspect-[9/16]' : 'aspect-video'
+            }`}
+          >
             <video
               className="h-full w-full object-cover"
               controls
@@ -87,7 +94,7 @@ export default function ProjectPage() {
               poster={project.image}
               preload="metadata"
             >
-              <source src={PROJECT_VIDEO} type="video/mp4" />
+              <source src={project.video || PROJECT_VIDEO} type="video/mp4" />
             </video>
           </div>
         </motion.div>

@@ -27,6 +27,7 @@ import {
   ACCENT,
   HERO_VIDEO,
   IMG,
+  CONTACT,
   CATEGORIES,
   CATEGORY_ICON,
   PROJECTS,
@@ -737,14 +738,14 @@ function Contact() {
           className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row"
         >
           <a
-            href="mailto:daniele.leonzi@example.com"
+            href={`mailto:${CONTACT.email}`}
             className="group inline-flex items-center gap-2 rounded-full px-8 py-4 text-sm font-semibold text-white transition-transform duration-300 hover:scale-105"
             style={{ background: ACCENT }}
           >
             <Mail size={18} /> Email
           </a>
           <a
-            href="https://www.linkedin.com"
+            href={CONTACT.linkedin}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-full border border-white/20 px-8 py-4 text-sm font-semibold text-white transition-colors duration-300 hover:bg-white/5"
@@ -752,7 +753,7 @@ function Contact() {
             <Linkedin size={18} /> LinkedIn
           </a>
           <a
-            href="https://www.instagram.com"
+            href={CONTACT.instagram}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-full border border-white/20 px-8 py-4 text-sm font-semibold text-white transition-colors duration-300 hover:bg-white/5"
