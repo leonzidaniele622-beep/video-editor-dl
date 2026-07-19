@@ -573,7 +573,7 @@ function SocialManagement() {
           title="Social Media Management"
           description="Oltre alla produzione video, gestisco la creazione e la pubblicazione di contenuti social per brand e realtà del territorio."
         />
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {SMM.map((s, i) => (
             <motion.a
               key={s.handle}
