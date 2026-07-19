@@ -84,18 +84,29 @@ export default function ProjectPage() {
               isPortrait ? 'aspect-[9/16]' : 'aspect-video'
             }`}
           >
-            <video
-              className="h-full w-full object-cover"
-              controls
-              autoPlay
-              muted
-              loop
-              playsInline
-              poster={project.image}
-              preload="metadata"
-            >
-              <source src={project.video || PROJECT_VIDEO} type="video/mp4" />
-            </video>
+            {project.youtube ? (
+              <iframe
+                className="absolute inset-0 h-full w-full"
+                src={`https://www.youtube.com/embed/${project.youtube}?rel=0&modestbranding=1`}
+                title={project.title}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            ) : (
+              <video
+                className="h-full w-full object-cover"
+                controls
+                autoPlay
+                muted
+                loop
+                playsInline
+                poster={project.image}
+                preload="metadata"
+              >
+                <source src={project.video || PROJECT_VIDEO} type="video/mp4" />
+              </video>
+            )}
           </div>
         </motion.div>
 

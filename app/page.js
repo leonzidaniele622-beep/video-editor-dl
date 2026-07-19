@@ -22,6 +22,9 @@ import {
   Send,
   Loader2,
   Film,
+  ChevronLeft,
+  ChevronRight,
+  Camera,
 } from 'lucide-react'
 import {
   ACCENT,
@@ -29,8 +32,10 @@ import {
   IMG,
   CONTACT,
   CATEGORIES,
+  CATEGORY_ORDER,
   CATEGORY_ICON,
   PROJECTS,
+  GALLERY,
   EXPERIENCES,
   SOFTWARE,
   SKILLS,
@@ -44,6 +49,7 @@ import {
 const NAV_LINKS = [
   { label: 'Home', href: '#home' },
   { label: 'Portfolio', href: '#portfolio' },
+  { label: 'Gallery', href: '#gallery' },
   { label: 'Chi sono', href: '#chi-sono' },
   { label: 'Competenze', href: '#competenze' },
   { label: 'Contatti', href: '#contatti' },
@@ -294,6 +300,10 @@ function SectionHeader({ eyebrow, title, description }) {
    ========================================================= */
 function Portfolio() {
   const [active, setActive] = useState('Tutti')
+  const cats = [
+    'Tutti',
+    ...CATEGORY_ORDER.filter((c) => PROJECTS.some((p) => p.category === c)),
+  ]
   const filtered =
     active === 'Tutti'
       ? PROJECTS
@@ -316,7 +326,7 @@ function Portfolio() {
           viewport={{ once: true }}
           className="mb-10 flex flex-wrap gap-2"
         >
-          {CATEGORIES.map((c) => (
+          {cats.map((c) => (
             <button
               key={c}
               onClick={() => setActive(c)}
@@ -392,6 +402,161 @@ function Portfolio() {
     </section>
   )
 }
+
+/* =========================================================
+   GALLERY (fotografia) + LIGHTBOX
+   ========================================================= */
+function GalleryLightbox({ index, onClose, onPrev, onNext }) {
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === 'Escape') onClose()
+      if (e.key === 'ArrowLeft') onPrev()
+      if (e.key === 'ArrowRight') onNext()
+    }
+    window.addEventListener('keydown', onKey)
+    document.body.style.overflow = 'hidden'
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      document.body.style.overflow = ''
+    }
+  }, [onClose, onPrev, onNext])
+
+  const item = GALLERY[index]
+  if (!item) return null
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.3 }}
+        onClick={onClose}
+        className="fixed inset-0 z-[70] flex items-center justify-center bg-black/90 p-4 backdrop-blur-md"
+      >
+        <button
+          aria-label="Chiudi"
+          onClick={onClose}
+          className="absolute right-4 top-4 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-black/50 text-white transition-colors hover:bg-black/80"
+        >
+          <X size={22} />
+        </button>
+        <button
+          aria-label="Precedente"
+          onClick={(e) => {
+            e.stopPropagation()
+            onPrev()
+          }}
+          className="absolute left-3 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-black/50 text-white transition-colors hover:bg-black/80 sm:left-6"
+        >
+          <ChevronLeft size={24} />
+        </button>
+        <button
+          aria-label="Successivo"
+          onClick={(e) => {
+            e.stopPropagation()
+            onNext()
+          }}
+          className="absolute right-3 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-black/50 text-white transition-colors hover:bg-black/80 sm:right-6"
+        >
+          <ChevronRight size={24} />
+        </button>
+
+        <motion.div
+          key={item.id}
+          initial={{ opacity: 0, scale: 0.97 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          onClick={(e) => e.stopPropagation()}
+          className="relative max-h-[85vh] max-w-4xl"
+        >
+          <img
+            src={item.src}
+            alt={item.title}
+            className="max-h-[85vh] w-auto rounded-2xl object-contain"
+          />
+          <div className="absolute inset-x-0 bottom-0 rounded-b-2xl bg-gradient-to-t from-black/80 to-transparent p-5">
+            <p className="text-xs uppercase tracking-wider text-white/60">
+              {item.tag}
+            </p>
+            <p className="text-lg font-bold text-white">{item.title}</p>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  )
+}
+
+function Gallery() {
+  const [index, setIndex] = useState(null)
+  const open = index !== null
+  const prev = () => setIndex((i) => (i - 1 + GALLERY.length) % GALLERY.length)
+  const next = () => setIndex((i) => (i + 1) % GALLERY.length)
+
+  return (
+    <section id="gallery" className="relative py-28">
+      <div className="mx-auto max-w-7xl px-6 lg:px-10">
+        <SectionHeader
+          eyebrow="Fotografia"
+          title="Gallery"
+          description="Una selezione di scatti tra eventi, matrimoni e progetti artistici. Clicca su una foto per aprirla."
+        />
+
+        <div className="masonry">
+          {GALLERY.map((g, i) => (
+            <motion.button
+              key={g.id}
+              initial={{ opacity: 0, scale: 0.96 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ duration: 0.5, delay: (i % 6) * 0.05 }}
+              onClick={() => setIndex(i)}
+              className="masonry-item group relative block w-full overflow-hidden rounded-2xl border border-white/5 bg-[#111111]"
+            >
+              <div
+                className={`relative w-full overflow-hidden ${
+                  g.span === 'tall' ? 'aspect-[3/4]' : 'aspect-[4/3]'
+                }`}
+              >
+                <img
+                  src={g.src}
+                  alt={g.title}
+                  loading="lazy"
+                  className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 transition-opacity duration-500 group-hover:opacity-90" />
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                  <span
+                    className="flex h-12 w-12 items-center justify-center rounded-full"
+                    style={{ background: ACCENT }}
+                  >
+                    <Camera size={18} className="text-white" />
+                  </span>
+                </div>
+                <div className="absolute inset-x-0 bottom-0 p-4 text-left">
+                  <p className="text-[11px] font-medium uppercase tracking-wider text-white/60">
+                    {g.tag}
+                  </p>
+                  <p className="text-sm font-bold text-white">{g.title}</p>
+                </div>
+              </div>
+            </motion.button>
+          ))}
+        </div>
+      </div>
+
+      {open && (
+        <GalleryLightbox
+          index={index}
+          onClose={() => setIndex(null)}
+          onPrev={prev}
+          onNext={next}
+        />
+      )}
+    </section>
+  )
+}
+
 
 /* =========================================================
    CHI SONO + ESPERIENZE
@@ -798,6 +963,7 @@ function App() {
       <Navbar />
       <Hero />
       <Portfolio />
+      <Gallery />
       <About />
       <Skills />
       <Contact />
