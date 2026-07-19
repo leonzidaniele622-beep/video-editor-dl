@@ -25,6 +25,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Camera,
+  ArrowUpRight,
 } from 'lucide-react'
 import {
   ACCENT,
@@ -36,6 +37,7 @@ import {
   CATEGORY_ICON,
   PROJECTS,
   GALLERY,
+  SMM,
   EXPERIENCES,
   SOFTWARE,
   SKILLS,
@@ -50,6 +52,7 @@ const NAV_LINKS = [
   { label: 'Home', href: '#home' },
   { label: 'Portfolio', href: '#portfolio' },
   { label: 'Gallery', href: '#gallery' },
+  { label: 'Social', href: '#social' },
   { label: 'Chi sono', href: '#chi-sono' },
   { label: 'Competenze', href: '#competenze' },
   { label: 'Contatti', href: '#contatti' },
@@ -559,6 +562,67 @@ function Gallery() {
 
 
 /* =========================================================
+   SOCIAL MEDIA MANAGEMENT
+   ========================================================= */
+function SocialManagement() {
+  return (
+    <section id="social" className="relative py-28">
+      <div className="mx-auto max-w-7xl px-6 lg:px-10">
+        <SectionHeader
+          eyebrow="Gestione social"
+          title="Social Media Management"
+          description="Oltre alla produzione video, gestisco la creazione e la pubblicazione di contenuti social per brand e realtà del territorio."
+        />
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+          {SMM.map((s, i) => (
+            <motion.a
+              key={s.handle}
+              href={s.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              variants={fadeUp}
+              custom={i}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, margin: '-40px' }}
+              className="group rounded-2xl border border-white/5 bg-[#111111] p-8 transition-colors duration-300 hover:border-white/20"
+            >
+              <div className="flex items-start justify-between">
+                <span
+                  className="flex h-12 w-12 items-center justify-center rounded-xl"
+                  style={{ background: 'rgba(230,57,70,0.12)' }}
+                >
+                  <Instagram size={22} style={{ color: ACCENT }} />
+                </span>
+                <ArrowUpRight
+                  size={20}
+                  className="text-white/30 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-white"
+                />
+              </div>
+              <p className="mt-6 text-xl font-bold">{s.brand}</p>
+              <p className="mt-1 text-sm text-white/40">@{s.handle}</p>
+              <span
+                className="mt-5 inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
+                style={
+                  s.full
+                    ? { background: ACCENT, color: '#fff' }
+                    : {
+                        border: '1px solid rgba(255,255,255,0.15)',
+                        color: 'rgba(255,255,255,0.7)',
+                      }
+                }
+              >
+                {s.scope}
+              </span>
+            </motion.a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* =========================================================
    CHI SONO + ESPERIENZE
    ========================================================= */
 function About() {
@@ -964,6 +1028,7 @@ function App() {
       <Hero />
       <Portfolio />
       <Gallery />
+      <SocialManagement />
       <About />
       <Skills />
       <Contact />
