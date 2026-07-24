@@ -35,6 +35,7 @@ import {
   CATEGORIES,
   CATEGORY_ORDER,
   CATEGORY_LABEL,
+  CATEGORY_COVER,
   CATEGORY_ICON,
   PROJECTS,
   GALLERY,
@@ -309,7 +310,7 @@ function Portfolio() {
   )
   const folders = cats.map((c) => {
     const items = PROJECTS.filter((p) => p.category === c)
-    return { category: c, count: items.length, cover: items[0].image }
+    return { category: c, count: items.length, cover: CATEGORY_COVER[c] || items[0].image }
   })
   const activeItems = openCat
     ? PROJECTS.filter((p) => p.category === openCat)
