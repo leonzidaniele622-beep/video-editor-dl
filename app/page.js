@@ -302,15 +302,17 @@ function SectionHeader({ eyebrow, title, description }) {
    PORTFOLIO
    ========================================================= */
 function Portfolio() {
-  const [active, setActive] = useState('Tutti')
-  const cats = [
-    'Tutti',
-    ...CATEGORY_ORDER.filter((c) => PROJECTS.some((p) => p.category === c)),
-  ]
-  const filtered =
-    active === 'Tutti'
-      ? PROJECTS
-      : PROJECTS.filter((p) => p.category === active)
+  const [openCat, setOpenCat] = useState(null)
+  const cats = CATEGORY_ORDER.filter((c) =>
+    PROJECTS.some((p) => p.category === c)
+  )
+  const folders = cats.map((c) => {
+    const items = PROJECTS.filter((p) => p.category === c)
+    return { category: c, count: items.length, cover: items[0].image }
+  })
+  const activeItems = openCat
+    ? PROJECTS.filter((p) => p.category === openCat)
+    : []
 
   return (
     <section id="portfolio" className="relative py-28">
@@ -318,89 +320,140 @@ function Portfolio() {
         <SectionHeader
           eyebrow="Portfolio"
           title="Lavori selezionati"
-          description="Una raccolta di progetti tra eventi, aziende, concerti e contenuti social. Ogni lavoro nasce dalla cura del montaggio e dall’attenzione al dettaglio."
+          description="I lavori sono organizzati per categoria. Scegli una cartella per esplorare i progetti al suo interno."
         />
 
-        {/* Filters */}
-        <motion.div
-          variants={fadeUp}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true }}
-          className="mb-10 flex flex-wrap gap-2"
-        >
-          {cats.map((c) => (
-            <button
-              key={c}
-              onClick={() => setActive(c)}
-              className={`rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-300 ${
-                active === c
-                  ? 'text-white'
-                  : 'border border-white/10 text-white/60 hover:border-white/30 hover:text-white'
-              }`}
-              style={active === c ? { background: ACCENT } : {}}
+        <AnimatePresence mode="wait">
+          {!openCat ? (
+            <motion.div
+              key="folders"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.5 }}
+              className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
             >
-              {c}
-            </button>
-          ))}
-        </motion.div>
-
-        {/* Masonry grid */}
-        <div className="masonry">
-          <AnimatePresence mode="popLayout">
-            {filtered.map((p, i) => {
-              const Icon = CATEGORY_ICON[p.category] || Film
-              return (
-                <motion.div
-                  layout
-                  key={p.id}
-                  initial={{ opacity: 0, scale: 0.96 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.96 }}
-                  transition={{ duration: 0.5, delay: (i % 6) * 0.05 }}
-                  className="masonry-item"
-                >
-                  <Link
-                    href={`/progetti/${p.slug}`}
+              {folders.map((f, i) => {
+                const Icon = CATEGORY_ICON[f.category] || Film
+                return (
+                  <motion.button
+                    key={f.category}
+                    initial={{ opacity: 0, scale: 0.96 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true, margin: '-40px' }}
+                    transition={{ duration: 0.5, delay: i * 0.06 }}
+                    onClick={() => setOpenCat(f.category)}
                     className="group relative block w-full overflow-hidden rounded-2xl border border-white/5 bg-[#111111] text-left"
                   >
-                    <div
-                      className={`relative w-full overflow-hidden ${
-                        p.span === 'tall' ? 'aspect-[3/4]' : 'aspect-[4/3]'
-                      }`}
-                    >
+                    <div className="relative aspect-[4/3] w-full overflow-hidden">
                       <img
-                        src={p.image}
-                        alt={p.title}
+                        src={f.cover}
+                        alt={f.category}
                         loading="lazy"
-                        className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+                        className="h-full w-full object-cover grayscale transition-all duration-700 ease-out group-hover:grayscale-0 group-hover:scale-[1.06]"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-70 transition-opacity duration-500 group-hover:opacity-95" />
-                      <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-                        <span
-                          className="flex h-14 w-14 items-center justify-center rounded-full"
-                          style={{ background: ACCENT }}
-                        >
-                          <Play size={20} className="text-white" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-black/20" />
+                      <div className="absolute left-5 top-5 flex items-center gap-2 rounded-full bg-black/50 px-3 py-1.5 backdrop-blur-sm">
+                        <Icon size={14} style={{ color: ACCENT }} />
+                        <span className="text-xs font-semibold uppercase tracking-wider text-white/90">
+                          Cartella
                         </span>
                       </div>
-
-                      <div className="absolute inset-x-0 bottom-0 p-5">
-                        <div className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-wider text-white/60">
-                          <Icon size={13} style={{ color: ACCENT }} />
-                          {p.category}
-                        </div>
-                        <h3 className="mt-1 text-lg font-bold leading-snug text-white">
-                          {p.title}
+                      <div className="absolute inset-x-0 bottom-0 p-6">
+                        <h3 className="text-2xl font-extrabold text-white">
+                          {f.category}
                         </h3>
+                        <div className="mt-1 flex items-center gap-3 text-sm text-white/60">
+                          <span>{f.count} video</span>
+                          <span
+                            className="inline-flex items-center gap-1 font-semibold"
+                            style={{ color: ACCENT }}
+                          >
+                            Apri <ChevronRight size={14} />
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </Link>
-                </motion.div>
-              )
-            })}
-          </AnimatePresence>
-        </div>
+                  </motion.button>
+                )
+              })}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="cat"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.5 }}
+            >
+              <div className="mb-8 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setOpenCat(null)}
+                    className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-white/80 transition-colors hover:bg-white/5"
+                  >
+                    <ChevronLeft size={16} /> Categorie
+                  </button>
+                  <h3 className="text-2xl font-extrabold">{openCat}</h3>
+                </div>
+                <span className="text-sm text-white/40">
+                  {activeItems.length} video
+                </span>
+              </div>
+
+              <div className="masonry">
+                {activeItems.map((p, i) => {
+                  const Icon = CATEGORY_ICON[p.category] || Film
+                  return (
+                    <motion.div
+                      key={p.id}
+                      initial={{ opacity: 0, scale: 0.96 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.5, delay: (i % 6) * 0.05 }}
+                      className="masonry-item"
+                    >
+                      <Link
+                        href={`/progetti/${p.slug}`}
+                        className="group relative block w-full overflow-hidden rounded-2xl border border-white/5 bg-[#111111] text-left"
+                      >
+                        <div
+                          className={`relative w-full overflow-hidden ${
+                            p.span === 'tall' ? 'aspect-[3/4]' : 'aspect-[4/3]'
+                          }`}
+                        >
+                          <img
+                            src={p.image}
+                            alt={p.title}
+                            loading="lazy"
+                            className="h-full w-full object-cover grayscale transition-all duration-700 ease-out group-hover:grayscale-0 group-hover:scale-[1.06]"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 transition-opacity duration-500 group-hover:opacity-95" />
+                          <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                            <span
+                              className="flex h-14 w-14 items-center justify-center rounded-full"
+                              style={{ background: ACCENT }}
+                            >
+                              <Play size={20} className="text-white" />
+                            </span>
+                          </div>
+                          <div className="absolute inset-x-0 bottom-0 p-5">
+                            <div className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-wider text-white/60">
+                              <Icon size={13} style={{ color: ACCENT }} />
+                              {p.category}
+                            </div>
+                            <h3 className="mt-1 text-lg font-bold leading-snug text-white">
+                              {p.title}
+                            </h3>
+                          </div>
+                        </div>
+                      </Link>
+                    </motion.div>
+                  )
+                })}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </section>
   )
