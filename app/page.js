@@ -646,10 +646,18 @@ function SocialManagement() {
             >
               <div className="flex items-start justify-between">
                 <span
-                  className="flex h-12 w-12 items-center justify-center rounded-xl"
+                  className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl"
                   style={{ background: 'rgba(230,57,70,0.12)' }}
                 >
-                  <Instagram size={22} style={{ color: ACCENT }} />
+                  {s.logo ? (
+                    <img
+                      src={s.logo}
+                      alt={s.brand}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <Instagram size={22} style={{ color: ACCENT }} />
+                  )}
                 </span>
                 <ArrowUpRight
                   size={20}
@@ -1038,14 +1046,16 @@ function Contact() {
           >
             <Linkedin size={18} /> LinkedIn
           </a>
-          <a
-            href={CONTACT.instagram}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-full border border-white/20 px-8 py-4 text-sm font-semibold text-white transition-colors duration-300 hover:bg-white/5"
-          >
-            <Instagram size={18} /> Instagram
-          </a>
+          {CONTACT.instagram && (
+            <a
+              href={CONTACT.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full border border-white/20 px-8 py-4 text-sm font-semibold text-white transition-colors duration-300 hover:bg-white/5"
+            >
+              <Instagram size={18} /> Instagram
+            </a>
+          )}
         </motion.div>
 
         <ContactForm />
