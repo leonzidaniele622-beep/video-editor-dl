@@ -8,9 +8,11 @@ import { ArrowLeft, ArrowUpRight, Film } from 'lucide-react'
 import {
   PROJECTS,
   PROJECT_VIDEO,
+  PROJECT_DESC_EN,
   ACCENT,
   CATEGORY_ICON,
 } from '@/lib/portfolio'
+import { useLang } from '@/lib/i18n'
 
 function InstagramEmbeds({ items }) {
   useEffect(() => {
@@ -57,6 +59,7 @@ function InstagramEmbeds({ items }) {
 }
 
 export default function ProjectPage() {
+  const { t, lang } = useLang()
   const params = useParams()
   const slug = params?.slug
   const index = PROJECTS.findIndex((p) => p.slug === slug)
@@ -65,13 +68,13 @@ export default function ProjectPage() {
   if (!project) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center gap-6 bg-[#0B0B0B] px-6 text-center text-white">
-        <h1 className="text-3xl font-extrabold">Progetto non trovato</h1>
+        <h1 className="text-3xl font-extrabold">{t.project.notFound}</h1>
         <Link
           href="/#portfolio"
           className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold"
           style={{ background: ACCENT }}
         >
-          <ArrowLeft size={16} /> Torna al portfolio
+          <ArrowLeft size={16} /> {t.project.back}
         </Link>
       </main>
     )
@@ -94,7 +97,7 @@ export default function ProjectPage() {
             href="/#portfolio"
             className="inline-flex items-center gap-2 text-sm font-medium text-white/70 transition-colors hover:text-white"
           >
-            <ArrowLeft size={16} /> Portfolio
+            <ArrowLeft size={16} /> {t.project.portfolio}
           </Link>
         </div>
       </header>
@@ -108,7 +111,7 @@ export default function ProjectPage() {
         >
           <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.2em] text-white/60">
             <Icon size={14} style={{ color: ACCENT }} />
-            {project.category}
+            {t.categories[project.category] || project.category}
           </div>
           <h1 className="mt-3 text-4xl font-extrabold tracking-tight sm:text-6xl">
             {project.title}
@@ -170,14 +173,16 @@ export default function ProjectPage() {
         <div className="mt-12 grid grid-cols-1 gap-12 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-white/40">
-              Il progetto
+              {t.project.theProject}
             </h2>
             <p className="mt-4 text-lg leading-relaxed text-white/70">
-              {project.description}
+              {lang === 'en'
+                ? PROJECT_DESC_EN[project.id] || project.description
+                : project.description}
             </p>
 
             <h2 className="mt-10 text-sm font-semibold uppercase tracking-[0.2em] text-white/40">
-              Software utilizzati
+              {t.project.softwareUsed}
             </h2>
             <div className="mt-4 flex flex-wrap gap-2">
               {project.software.map((s) => (
@@ -193,16 +198,16 @@ export default function ProjectPage() {
 
           <div className="space-y-6 rounded-2xl border border-white/10 bg-[#111111] p-8">
             <div>
-              <p className="text-xs uppercase tracking-wider text-white/40">Anno</p>
+              <p className="text-xs uppercase tracking-wider text-white/40">{t.project.year}</p>
               <p className="mt-1 text-lg font-semibold">{project.year}</p>
             </div>
             <div className="border-t border-white/10 pt-6">
-              <p className="text-xs uppercase tracking-wider text-white/40">Cliente</p>
+              <p className="text-xs uppercase tracking-wider text-white/40">{t.project.client}</p>
               <p className="mt-1 text-lg font-semibold">{project.client}</p>
             </div>
             <div className="border-t border-white/10 pt-6">
-              <p className="text-xs uppercase tracking-wider text-white/40">Categoria</p>
-              <p className="mt-1 text-lg font-semibold">{project.category}</p>
+              <p className="text-xs uppercase tracking-wider text-white/40">{t.project.category}</p>
+              <p className="mt-1 text-lg font-semibold">{t.categories[project.category] || project.category}</p>
             </div>
           </div>
         </div>
@@ -214,7 +219,7 @@ export default function ProjectPage() {
         >
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-white/40">
-              Prossimo progetto
+              {t.project.next}
             </p>
             <p className="mt-2 text-2xl font-extrabold tracking-tight sm:text-3xl">
               {next.title}

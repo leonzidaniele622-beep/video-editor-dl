@@ -34,7 +34,7 @@ export default function CustomCursor() {
         style={{ x: sx, y: sy }}
         className="absolute h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full"
       >
-        <span className="block h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#E63946]" />
+        <span className="block h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#7C3AED]" />
       </motion.div>
       <motion.div
         style={{ x: sx, y: sy }}

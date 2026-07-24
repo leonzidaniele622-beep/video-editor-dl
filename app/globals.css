@@ -68,11 +68,11 @@
 }
 
 ::selection {
-  background: #E63946;
+  background: #7C3AED;
   color: #ffffff;
 }
 
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: #0B0B0B; }
 ::-webkit-scrollbar-thumb { background: #222; border-radius: 8px; }
-::-webkit-scrollbar-thumb:hover { background: #E63946; }
+::-webkit-scrollbar-thumb:hover { background: #7C3AED; }

@@ -27,6 +27,7 @@ import {
   Camera,
   ArrowUpRight,
   Download,
+  Newspaper,
 } from 'lucide-react'
 import {
   ACCENT,
@@ -37,10 +38,12 @@ import {
   CATEGORIES,
   CATEGORY_ORDER,
   CATEGORY_LABEL,
+  CATEGORY_LABEL_EN,
   CATEGORY_COVER,
   CATEGORY_ICON,
   PROJECTS,
   GALLERY,
+  GALLERY_TITLE_EN,
   SMM,
   EXPERIENCES,
   SOFTWARE,
@@ -48,21 +51,45 @@ import {
   fadeUp,
   scaleIn,
 } from '@/lib/portfolio'
+import { useLang, field } from '@/lib/i18n'
 
 /* =========================================================
    NAVBAR
    ========================================================= */
 const NAV_LINKS = [
-  { label: 'Home', href: '#home' },
-  { label: 'Portfolio', href: '#portfolio' },
-  { label: 'Gallery', href: '#gallery' },
-  { label: 'Social', href: '#social' },
-  { label: 'Chi sono', href: '#chi-sono' },
-  { label: 'Competenze', href: '#competenze' },
-  { label: 'Contatti', href: '#contatti' },
+  { key: 'home', href: '#home' },
+  { key: 'portfolio', href: '#portfolio' },
+  { key: 'gallery', href: '#gallery' },
+  { key: 'social', href: '#social' },
+  { key: 'about', href: '#chi-sono' },
+  { key: 'skills', href: '#competenze' },
+  { key: 'contact', href: '#contatti' },
 ]
 
+function LangToggle({ className = '' }) {
+  const { lang, setLang } = useLang()
+  return (
+    <div
+      className={`inline-flex items-center rounded-full border border-white/15 p-0.5 text-xs font-semibold ${className}`}
+    >
+      {['it', 'en'].map((l) => (
+        <button
+          key={l}
+          onClick={() => setLang(l)}
+          className={`rounded-full px-2.5 py-1 uppercase transition-colors ${
+            lang === l ? 'text-white' : 'text-white/50 hover:text-white/80'
+          }`}
+          style={lang === l ? { background: ACCENT } : {}}
+        >
+          {l}
+        </button>
+      ))}
+    </div>
+  )
+}
+
 function Navbar() {
+  const { t } = useLang()
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
 
@@ -100,26 +127,31 @@ function Navbar() {
                 href={l.href}
                 className="relative text-sm font-medium text-white/70 transition-colors hover:text-white"
               >
-                {l.label}
+                {t.nav[l.key]}
               </a>
             ))}
           </nav>
 
-          <a
-            href="#contatti"
-            className="hidden rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-transform duration-300 hover:scale-105 md:inline-flex"
-            style={{ background: ACCENT }}
-          >
-            Contattami
-          </a>
+          <div className="hidden items-center gap-4 md:flex">
+            <LangToggle />
+            <a
+              href="#contatti"
+              className="rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-transform duration-300 hover:scale-105"
+              style={{ background: ACCENT }}
+            >
+              {t.nav.cta}
+            </a>
+          </div>
 
-          <button
-            aria-label="Apri menu"
-            onClick={() => setOpen((v) => !v)}
-            className="md:hidden"
-          >
-            {open ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          <div className="flex items-center gap-3 md:hidden">
+            <LangToggle />
+            <button
+              aria-label={t.nav.menu}
+              onClick={() => setOpen((v) => !v)}
+            >
+              {open ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -140,7 +172,7 @@ function Navbar() {
                   onClick={() => setOpen(false)}
                   className="rounded-lg px-3 py-3 text-base font-medium text-white/80 hover:bg-white/5 hover:text-white"
                 >
-                  {l.label}
+                  {t.nav[l.key]}
                 </a>
               ))}
             </div>
@@ -155,6 +187,7 @@ function Navbar() {
    HERO
    ========================================================= */
 function Hero() {
+  const { t } = useLang()
   const ref = useRef(null)
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -193,7 +226,7 @@ function Hero() {
           transition={{ duration: 0.7, delay: 0.2 }}
           className="mb-6 text-xs font-medium uppercase tracking-[0.3em] text-white/50"
         >
-          Portfolio
+          {t.hero.eyebrow}
         </motion.p>
 
         <motion.h1
@@ -211,8 +244,9 @@ function Hero() {
           transition={{ duration: 0.7, delay: 0.45 }}
           className="mt-6 text-sm font-medium uppercase tracking-[0.2em] text-white/80 sm:text-base"
         >
-          Video Editor <span style={{ color: ACCENT }}>•</span> Videomaker{' '}
-          <span style={{ color: ACCENT }}>•</span> Content Creator
+          {t.hero.roles[0]} <span style={{ color: ACCENT }}>•</span>{' '}
+          {t.hero.roles[1]} <span style={{ color: ACCENT }}>•</span>{' '}
+          {t.hero.roles[2]}
         </motion.p>
 
         <motion.p
@@ -221,8 +255,7 @@ function Hero() {
           transition={{ duration: 0.7, delay: 0.55 }}
           className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-white/60"
         >
-          Trasformo idee e riprese in contenuti coinvolgenti attraverso
-          montaggio, storytelling e attenzione ai dettagli.
+          {t.hero.tagline}
         </motion.p>
 
         <motion.div
@@ -236,21 +269,21 @@ function Hero() {
             className="group inline-flex items-center gap-2 rounded-full px-8 py-4 text-sm font-semibold text-white transition-transform duration-300 hover:scale-105"
             style={{ background: ACCENT }}
           >
-            Guarda i lavori
+            {t.hero.ctaWork}
             <Play size={16} className="transition-transform group-hover:translate-x-0.5" />
           </a>
           <a
             href="#contatti"
             className="inline-flex items-center gap-2 rounded-full border border-white/20 px-8 py-4 text-sm font-semibold text-white transition-colors duration-300 hover:bg-white/5"
           >
-            Contattami
+            {t.hero.ctaContact}
           </a>
           <a
             href={CV_URL}
             download
             className="inline-flex items-center gap-2 rounded-full border border-white/20 px-8 py-4 text-sm font-semibold text-white transition-colors duration-300 hover:bg-white/5"
           >
-            <Download size={16} /> Scarica CV
+            <Download size={16} /> {t.hero.ctaCV}
           </a>
         </motion.div>
       </div>
@@ -313,6 +346,12 @@ function SectionHeader({ eyebrow, title, description }) {
    PORTFOLIO
    ========================================================= */
 function Portfolio() {
+  const { t, lang } = useLang()
+  const catLabel = (c) =>
+    lang === 'en'
+      ? CATEGORY_LABEL_EN[c] || t.categories[c] || c
+      : CATEGORY_LABEL[c] || c
+  const catName = (c) => t.categories[c] || c
   const [openCat, setOpenCat] = useState(null)
   const cats = CATEGORY_ORDER.filter((c) =>
     PROJECTS.some((p) => p.category === c)
@@ -329,9 +368,9 @@ function Portfolio() {
     <section id="portfolio" className="relative py-28">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
         <SectionHeader
-          eyebrow="Portfolio"
-          title="Lavori selezionati"
-          description="I lavori sono organizzati per categoria. Scegli una cartella per esplorare i progetti al suo interno."
+          eyebrow={t.portfolio.eyebrow}
+          title={t.portfolio.title}
+          description={t.portfolio.desc}
         />
 
         <AnimatePresence mode="wait">
@@ -367,20 +406,20 @@ function Portfolio() {
                       <div className="absolute left-5 top-5 flex items-center gap-2 rounded-full bg-black/50 px-3 py-1.5 backdrop-blur-sm">
                         <Icon size={14} style={{ color: ACCENT }} />
                         <span className="text-xs font-semibold uppercase tracking-wider text-white/90">
-                          Cartella
+                          {t.portfolio.folder}
                         </span>
                       </div>
                       <div className="absolute inset-x-0 bottom-0 p-6">
                         <h3 className="text-xl font-extrabold leading-tight text-white sm:text-2xl">
-                          {CATEGORY_LABEL[f.category] || f.category}
+                          {catLabel(f.category)}
                         </h3>
                         <div className="mt-1 flex items-center gap-3 text-sm text-white/60">
-                          <span>{f.count} video</span>
+                          <span>{f.count} {t.portfolio.videos}</span>
                           <span
                             className="inline-flex items-center gap-1 font-semibold"
                             style={{ color: ACCENT }}
                           >
-                            Apri <ChevronRight size={14} />
+                            {t.portfolio.open} <ChevronRight size={14} />
                           </span>
                         </div>
                       </div>
@@ -403,14 +442,14 @@ function Portfolio() {
                     onClick={() => setOpenCat(null)}
                     className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-white/80 transition-colors hover:bg-white/5"
                   >
-                    <ChevronLeft size={16} /> Categorie
+                    <ChevronLeft size={16} /> {t.portfolio.categories}
                   </button>
                   <h3 className="text-xl font-extrabold leading-tight sm:text-2xl">
-                    {CATEGORY_LABEL[openCat] || openCat}
+                    {catLabel(openCat)}
                   </h3>
                 </div>
                 <span className="text-sm text-white/40">
-                  {activeItems.length} video
+                  {activeItems.length} {t.portfolio.videos}
                 </span>
               </div>
 
@@ -452,7 +491,7 @@ function Portfolio() {
                           <div className="absolute inset-x-0 bottom-0 p-5">
                             <div className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-wider text-white/60">
                               <Icon size={13} style={{ color: ACCENT }} />
-                              {p.category}
+                              {catName(p.category)}
                             </div>
                             <h3 className="mt-1 text-lg font-bold leading-snug text-white">
                               {p.title}
@@ -476,6 +515,7 @@ function Portfolio() {
    GALLERY (fotografia) + LIGHTBOX
    ========================================================= */
 function GalleryLightbox({ index, onClose, onPrev, onNext }) {
+  const { t, lang } = useLang()
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === 'Escape') onClose()
@@ -546,9 +586,11 @@ function GalleryLightbox({ index, onClose, onPrev, onNext }) {
           />
           <div className="absolute inset-x-0 bottom-0 rounded-b-2xl bg-gradient-to-t from-black/80 to-transparent p-5">
             <p className="text-xs uppercase tracking-wider text-white/60">
-              {item.tag}
+              {t.categories[item.tag] || item.tag}
             </p>
-            <p className="text-lg font-bold text-white">{item.title}</p>
+            <p className="text-lg font-bold text-white">
+              {lang === 'en' ? GALLERY_TITLE_EN[item.id] || item.title : item.title}
+            </p>
           </div>
         </motion.div>
       </motion.div>
@@ -557,6 +599,7 @@ function GalleryLightbox({ index, onClose, onPrev, onNext }) {
 }
 
 function Gallery() {
+  const { t, lang } = useLang()
   const [index, setIndex] = useState(null)
   const open = index !== null
   const prev = () => setIndex((i) => (i - 1 + GALLERY.length) % GALLERY.length)
@@ -566,9 +609,9 @@ function Gallery() {
     <section id="gallery" className="relative py-28">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
         <SectionHeader
-          eyebrow="Fotografia"
-          title="Gallery"
-          description="Una selezione di scatti tra eventi, matrimoni e progetti artistici. Clicca su una foto per aprirla."
+          eyebrow={t.gallery.eyebrow}
+          title={t.gallery.title}
+          description={t.gallery.desc}
         />
 
         <div className="masonry">
@@ -604,9 +647,11 @@ function Gallery() {
                 </div>
                 <div className="absolute inset-x-0 bottom-0 p-4 text-left">
                   <p className="text-[11px] font-medium uppercase tracking-wider text-white/60">
-                    {g.tag}
+                    {t.categories[g.tag] || g.tag}
                   </p>
-                  <p className="text-sm font-bold text-white">{g.title}</p>
+                  <p className="text-sm font-bold text-white">
+                    {lang === 'en' ? GALLERY_TITLE_EN[g.id] || g.title : g.title}
+                  </p>
                 </div>
               </div>
             </motion.button>
@@ -631,13 +676,14 @@ function Gallery() {
    SOCIAL MEDIA MANAGEMENT
    ========================================================= */
 function SocialManagement() {
+  const { t } = useLang()
   return (
     <section id="social" className="relative py-28">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
         <SectionHeader
-          eyebrow="Gestione social"
-          title="Social Media Management"
-          description="Oltre alla produzione video, gestisco la creazione e la pubblicazione di contenuti social per brand e realtà del territorio."
+          eyebrow={t.social.eyebrow}
+          title={t.social.title}
+          description={t.social.desc}
         />
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {SMM.map((s, i) => (
@@ -656,7 +702,7 @@ function SocialManagement() {
               <div className="flex items-start justify-between">
                 <span
                   className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl"
-                  style={{ background: 'rgba(230,57,70,0.12)' }}
+                  style={{ background: 'rgba(124,58,237,0.16)' }}
                 >
                   {s.logo ? (
                     <img
@@ -686,7 +732,7 @@ function SocialManagement() {
                       }
                 }
               >
-                {s.scope}
+                {s.full ? t.social.full : t.social.partial}
               </span>
             </motion.a>
           ))}
@@ -700,6 +746,7 @@ function SocialManagement() {
    CHI SONO + ESPERIENZE
    ========================================================= */
 function About() {
+  const { t, lang } = useLang()
   return (
     <section id="chi-sono" className="relative py-28">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
@@ -725,7 +772,7 @@ function About() {
             >
               <p className="text-2xl font-extrabold leading-none">DL</p>
               <p className="mt-1 text-xs font-medium text-white/80">
-                Video Editor
+                {t.about.badge}
               </p>
             </div>
           </motion.div>
@@ -739,7 +786,7 @@ function About() {
               className="mb-4 text-xs font-semibold uppercase tracking-[0.3em]"
               style={{ color: ACCENT }}
             >
-              Chi sono
+              {t.about.eyebrow}
             </motion.p>
             <motion.h2
               variants={fadeUp}
@@ -748,7 +795,7 @@ function About() {
               viewport={{ once: true }}
               className="text-4xl font-extrabold tracking-tight sm:text-5xl"
             >
-              Ritmo, storytelling e dettaglio.
+              {t.about.title}
             </motion.h2>
             <motion.p
               variants={fadeUp}
@@ -757,19 +804,14 @@ function About() {
               viewport={{ once: true }}
               className="mt-6 text-base leading-relaxed text-white/60"
             >
-              Laureato in Comunicazione Visiva Multimediale presso l’Accademia
-              di Belle Arti di Macerata. Mi occupo di produzione e
-              post-produzione video per aziende, eventi e contenuti social. La
-              mia passione per la musica mi ha permesso di sviluppare un forte
-              senso del ritmo e dell’attenzione ai dettagli, elementi che
-              applico quotidianamente nel montaggio video.
+              {t.about.paragraph}
             </motion.p>
           </div>
         </div>
 
         {/* ESPERIENZE — Timeline */}
         <div className="mt-28">
-          <SectionHeader eyebrow="Percorso" title="Esperienze" />
+          <SectionHeader eyebrow={t.experience.eyebrow} title={t.experience.title} />
           <div className="relative ml-3 border-l border-white/10 pl-8">
             {EXPERIENCES.map((e, i) => (
               <motion.div
@@ -785,13 +827,29 @@ function About() {
                   className="absolute -left-[41px] top-1.5 flex h-4 w-4 items-center justify-center rounded-full border-2 border-[#0B0B0B]"
                   style={{ background: ACCENT }}
                 />
-                {e.period && (
+                {field(e, 'period', lang) && (
                   <p className="text-xs font-medium uppercase tracking-wider text-white/40">
-                    {e.period}
+                    {field(e, 'period', lang)}
                   </p>
                 )}
-                <h4 className="mt-1 text-xl font-bold">{e.role}</h4>
-                <p className="mt-1 text-white/50">{e.detail}</p>
+                <h4 className="mt-1 text-xl font-bold">{field(e, 'role', lang)}</h4>
+                <p className="mt-1 text-white/50">{field(e, 'detail', lang)}</p>
+                {e.link && (
+                  <a
+                    href={e.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group mt-3 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-white transition-transform duration-300 hover:scale-105"
+                    style={{ background: ACCENT }}
+                  >
+                    <Newspaper size={15} />
+                    {field(e, 'linkLabel', lang)}
+                    <ArrowUpRight
+                      size={15}
+                      className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                    />
+                  </a>
+                )}
               </motion.div>
             ))}
           </div>
@@ -805,20 +863,21 @@ function About() {
    COMPETENZE + FORMAZIONE
    ========================================================= */
 function Skills() {
+  const { t } = useLang()
   return (
     <section id="competenze" className="relative py-28">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
         <SectionHeader
-          eyebrow="Competenze"
-          title="Software & skill"
-          description="Gli strumenti e le competenze che utilizzo ogni giorno per dare forma alle idee."
+          eyebrow={t.skills.eyebrow}
+          title={t.skills.title}
+          description={t.skills.desc}
         />
 
         <div className="grid grid-cols-1 gap-14 lg:grid-cols-2">
           {/* Software */}
           <div>
             <h3 className="mb-6 text-sm font-semibold uppercase tracking-[0.2em] text-white/50">
-              Software
+              {t.skills.software}
             </h3>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
               {SOFTWARE.map((s, i) => (
@@ -843,7 +902,7 @@ function Skills() {
           {/* Skills */}
           <div>
             <h3 className="mb-6 text-sm font-semibold uppercase tracking-[0.2em] text-white/50">
-              Competenze
+              {t.skills.skills}
             </h3>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
               {SKILLS.map((s, i) => (
@@ -869,7 +928,7 @@ function Skills() {
         {/* FORMAZIONE */}
         <div className="mt-24">
           <h3 className="mb-6 text-sm font-semibold uppercase tracking-[0.2em] text-white/50">
-            Formazione
+            {t.skills.education}
           </h3>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <motion.div
@@ -881,13 +940,13 @@ function Skills() {
             >
               <GraduationCap size={24} style={{ color: ACCENT }} />
               <p className="mt-4 text-xs uppercase tracking-wider text-white/40">
-                Laurea · 2020 – 2024 · 104/110
+                {t.skills.degree} · 2020 – 2024 · 104/110
               </p>
               <h4 className="mt-2 text-xl font-bold">
-                Comunicazione Visiva Multimediale
+                {t.skills.degreeTitle}
               </h4>
               <p className="mt-2 flex items-center gap-2 text-white/50">
-                <MapPin size={14} /> Accademia di Belle Arti di Macerata
+                <MapPin size={14} /> {t.skills.degreeSchool}
               </p>
             </motion.div>
 
@@ -901,13 +960,13 @@ function Skills() {
             >
               <BookOpen size={24} style={{ color: ACCENT }} />
               <p className="mt-4 text-xs uppercase tracking-wider text-white/40">
-                Diploma · 2014 – 2020
+                {t.skills.diploma} · 2014 – 2020
               </p>
               <h4 className="mt-2 text-xl font-bold">
-                Liceo Scientifico Scienze Applicate
+                {t.skills.diplomaTitle}
               </h4>
               <p className="mt-2 flex items-center gap-2 text-white/50">
-                <MapPin size={14} /> Liceo “G. Peano” — Nereto
+                <MapPin size={14} /> {t.skills.diplomaSchool}
               </p>
             </motion.div>
           </div>
@@ -921,6 +980,7 @@ function Skills() {
    CONTATTI + FORM
    ========================================================= */
 function ContactForm() {
+  const { t } = useLang()
   const [form, setForm] = useState({ name: '', email: '', message: '' })
   const [loading, setLoading] = useState(false)
 
@@ -930,7 +990,7 @@ function ContactForm() {
   const submit = async (e) => {
     e.preventDefault()
     if (!form.name || !form.email || !form.message) {
-      toast.error('Compila tutti i campi.')
+      toast.error(t.form.fillAll)
       return
     }
     setLoading(true)
@@ -942,20 +1002,20 @@ function ContactForm() {
       })
       const data = await res.json()
       if (res.ok) {
-        toast.success('Messaggio inviato! Ti risponderò presto.')
+        toast.success(t.form.success)
         setForm({ name: '', email: '', message: '' })
       } else {
-        toast.error(data.error || 'Errore nell’invio.')
+        toast.error(data.error || t.form.errorSend)
       }
     } catch (err) {
-      toast.error('Errore di rete. Riprova.')
+      toast.error(t.form.errorNet)
     } finally {
       setLoading(false)
     }
   }
 
   const inputCls =
-    'w-full rounded-xl border border-white/10 bg-[#111111] px-4 py-3.5 text-sm text-white placeholder:text-white/30 outline-none transition-colors focus:border-[#E63946]'
+    'w-full rounded-xl border border-white/10 bg-[#111111] px-4 py-3.5 text-sm text-white placeholder:text-white/30 outline-none transition-colors focus:border-[#7C3AED]'
 
   return (
     <motion.form
@@ -971,7 +1031,7 @@ function ContactForm() {
           name="name"
           value={form.name}
           onChange={onChange}
-          placeholder="Nome"
+          placeholder={t.form.name}
           className={inputCls}
         />
         <input
@@ -979,7 +1039,7 @@ function ContactForm() {
           type="email"
           value={form.email}
           onChange={onChange}
-          placeholder="Email"
+          placeholder={t.form.email}
           className={inputCls}
         />
       </div>
@@ -987,7 +1047,7 @@ function ContactForm() {
         name="message"
         value={form.message}
         onChange={onChange}
-        placeholder="Raccontami il tuo progetto…"
+        placeholder={t.form.message}
         rows={4}
         className={inputCls + ' resize-none'}
       />
@@ -999,11 +1059,11 @@ function ContactForm() {
       >
         {loading ? (
           <>
-            <Loader2 size={16} className="animate-spin" /> Invio…
+            <Loader2 size={16} className="animate-spin" /> {t.form.sending}
           </>
         ) : (
           <>
-            Invia messaggio <Send size={16} />
+            {t.form.send} <Send size={16} />
           </>
         )}
       </button>
@@ -1012,6 +1072,7 @@ function ContactForm() {
 }
 
 function Contact() {
+  const { t } = useLang()
   return (
     <section id="contatti" className="relative py-28">
       <div className="mx-auto max-w-5xl px-6 text-center lg:px-10">
@@ -1022,8 +1083,8 @@ function Contact() {
           viewport={{ once: true }}
           className="text-4xl font-extrabold tracking-tight sm:text-6xl lg:text-7xl"
         >
-          Realizziamo qualcosa{' '}
-          <span style={{ color: ACCENT }}>insieme.</span>
+          {t.contact.title1}{' '}
+          <span style={{ color: ACCENT }}>{t.contact.title2}</span>
         </motion.h2>
         <motion.p
           variants={fadeUp}
@@ -1032,8 +1093,7 @@ function Contact() {
           viewport={{ once: true }}
           className="mx-auto mt-6 max-w-xl text-lg text-white/60"
         >
-          Sono disponibile per collaborazioni freelance, progetti creativi e
-          opportunità lavorative.
+          {t.contact.desc}
         </motion.p>
 
         <motion.div
@@ -1048,7 +1108,7 @@ function Contact() {
             className="group inline-flex items-center gap-2 rounded-full px-8 py-4 text-sm font-semibold text-white transition-transform duration-300 hover:scale-105"
             style={{ background: ACCENT }}
           >
-            <Mail size={18} /> Email
+            <Mail size={18} /> {t.contact.email}
           </a>
           <a
             href={CONTACT.linkedin}
@@ -1056,14 +1116,14 @@ function Contact() {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-full border border-white/20 px-8 py-4 text-sm font-semibold text-white transition-colors duration-300 hover:bg-white/5"
           >
-            <Linkedin size={18} /> LinkedIn
+            <Linkedin size={18} /> {t.contact.linkedin}
           </a>
           <a
             href={CV_URL}
             download
             className="inline-flex items-center gap-2 rounded-full border border-white/20 px-8 py-4 text-sm font-semibold text-white transition-colors duration-300 hover:bg-white/5"
           >
-            <Download size={18} /> Scarica CV
+            <Download size={18} /> {t.contact.cv}
           </a>
           {CONTACT.instagram && (
             <a
@@ -1072,7 +1132,7 @@ function Contact() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full border border-white/20 px-8 py-4 text-sm font-semibold text-white transition-colors duration-300 hover:bg-white/5"
             >
-              <Instagram size={18} /> Instagram
+              <Instagram size={18} /> {t.contact.instagram}
             </a>
           )}
         </motion.div>
