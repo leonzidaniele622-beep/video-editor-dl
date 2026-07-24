@@ -26,9 +26,11 @@ import {
   ChevronRight,
   Camera,
   ArrowUpRight,
+  Download,
 } from 'lucide-react'
 import {
   ACCENT,
+  CV_URL,
   HERO_VIDEO,
   IMG,
   CONTACT,
@@ -242,6 +244,13 @@ function Hero() {
             className="inline-flex items-center gap-2 rounded-full border border-white/20 px-8 py-4 text-sm font-semibold text-white transition-colors duration-300 hover:bg-white/5"
           >
             Contattami
+          </a>
+          <a
+            href={CV_URL}
+            download
+            className="inline-flex items-center gap-2 rounded-full border border-white/20 px-8 py-4 text-sm font-semibold text-white transition-colors duration-300 hover:bg-white/5"
+          >
+            <Download size={16} /> Scarica CV
           </a>
         </motion.div>
       </div>
@@ -872,7 +881,7 @@ function Skills() {
             >
               <GraduationCap size={24} style={{ color: ACCENT }} />
               <p className="mt-4 text-xs uppercase tracking-wider text-white/40">
-                Laurea
+                Laurea · 2020 – 2024 · 104/110
               </p>
               <h4 className="mt-2 text-xl font-bold">
                 Comunicazione Visiva Multimediale
@@ -892,11 +901,14 @@ function Skills() {
             >
               <BookOpen size={24} style={{ color: ACCENT }} />
               <p className="mt-4 text-xs uppercase tracking-wider text-white/40">
-                Diploma
+                Diploma · 2014 – 2020
               </p>
               <h4 className="mt-2 text-xl font-bold">
                 Liceo Scientifico Scienze Applicate
               </h4>
+              <p className="mt-2 flex items-center gap-2 text-white/50">
+                <MapPin size={14} /> Liceo “G. Peano” — Nereto
+              </p>
             </motion.div>
           </div>
         </div>
@@ -1045,6 +1057,13 @@ function Contact() {
             className="inline-flex items-center gap-2 rounded-full border border-white/20 px-8 py-4 text-sm font-semibold text-white transition-colors duration-300 hover:bg-white/5"
           >
             <Linkedin size={18} /> LinkedIn
+          </a>
+          <a
+            href={CV_URL}
+            download
+            className="inline-flex items-center gap-2 rounded-full border border-white/20 px-8 py-4 text-sm font-semibold text-white transition-colors duration-300 hover:bg-white/5"
+          >
+            <Download size={18} /> Scarica CV
           </a>
           {CONTACT.instagram && (
             <a
