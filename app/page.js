@@ -34,6 +34,7 @@ import {
   CONTACT,
   CATEGORIES,
   CATEGORY_ORDER,
+  CATEGORY_LABEL,
   CATEGORY_ICON,
   PROJECTS,
   GALLERY,
@@ -360,8 +361,8 @@ function Portfolio() {
                         </span>
                       </div>
                       <div className="absolute inset-x-0 bottom-0 p-6">
-                        <h3 className="text-2xl font-extrabold text-white">
-                          {f.category}
+                        <h3 className="text-xl font-extrabold leading-tight text-white sm:text-2xl">
+                          {CATEGORY_LABEL[f.category] || f.category}
                         </h3>
                         <div className="mt-1 flex items-center gap-3 text-sm text-white/60">
                           <span>{f.count} video</span>
@@ -394,7 +395,9 @@ function Portfolio() {
                   >
                     <ChevronLeft size={16} /> Categorie
                   </button>
-                  <h3 className="text-2xl font-extrabold">{openCat}</h3>
+                  <h3 className="text-xl font-extrabold leading-tight sm:text-2xl">
+                    {CATEGORY_LABEL[openCat] || openCat}
+                  </h3>
                 </div>
                 <span className="text-sm text-white/40">
                   {activeItems.length} video
