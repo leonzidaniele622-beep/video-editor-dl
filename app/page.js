@@ -702,7 +702,7 @@ function SocialManagement() {
               <div className="flex items-start justify-between">
                 <span
                   className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl"
-                  style={{ background: 'rgba(124,58,237,0.16)' }}
+                  style={{ background: 'rgba(108,75,166,0.18)' }}
                 >
                   {s.logo ? (
                     <img
@@ -1015,7 +1015,7 @@ function ContactForm() {
   }
 
   const inputCls =
-    'w-full rounded-xl border border-white/10 bg-[#111111] px-4 py-3.5 text-sm text-white placeholder:text-white/30 outline-none transition-colors focus:border-[#7C3AED]'
+    'w-full rounded-xl border border-white/10 bg-[#111111] px-4 py-3.5 text-sm text-white placeholder:text-white/30 outline-none transition-colors focus:border-[#6C4BA6]'
 
   return (
     <motion.form
