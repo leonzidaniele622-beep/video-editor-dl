@@ -25,6 +25,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Camera,
+  Images,
   ArrowUpRight,
   Download,
   Newspaper,
@@ -361,7 +362,9 @@ function Portfolio() {
     return { category: c, count: items.length, cover: CATEGORY_COVER[c] || items[0].image }
   })
   const activeItems = openCat
-    ? PROJECTS.filter((p) => p.category === openCat)
+    ? PROJECTS.filter((p) => p.category === openCat).sort(
+        (a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0)
+      )
     : []
 
   return (
@@ -601,9 +604,13 @@ function GalleryLightbox({ index, onClose, onPrev, onNext }) {
 function Gallery() {
   const { t, lang } = useLang()
   const [index, setIndex] = useState(null)
+  const [folderOpen, setFolderOpen] = useState(false)
   const open = index !== null
   const prev = () => setIndex((i) => (i - 1 + GALLERY.length) % GALLERY.length)
   const next = () => setIndex((i) => (i + 1) % GALLERY.length)
+
+  const cover =
+    GALLERY.find((g) => g.id === 'g5') || GALLERY[0] || null
 
   return (
     <section id="gallery" className="relative py-28">
@@ -614,49 +621,119 @@ function Gallery() {
           description={t.gallery.desc}
         />
 
-        <div className="masonry">
-          {GALLERY.map((g, i) => (
-            <motion.button
-              key={g.id}
-              initial={{ opacity: 0, scale: 0.96 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true, margin: '-40px' }}
-              transition={{ duration: 0.5, delay: (i % 6) * 0.05 }}
-              onClick={() => setIndex(i)}
-              className="masonry-item group relative block w-full overflow-hidden rounded-2xl border border-white/5 bg-[#111111]"
+        <AnimatePresence mode="wait">
+          {!folderOpen ? (
+            <motion.div
+              key="folder"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.4 }}
+              className="mx-auto max-w-md"
             >
-              <div
-                className={`relative w-full overflow-hidden ${
-                  g.span === 'tall' ? 'aspect-[3/4]' : 'aspect-[4/3]'
-                }`}
+              <button
+                onClick={() => setFolderOpen(true)}
+                className="group relative block w-full overflow-hidden rounded-3xl border border-white/10 bg-[#111111] text-left"
               >
-                <img
-                  src={g.src}
-                  alt={g.title}
-                  loading="lazy"
-                  className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 transition-opacity duration-500 group-hover:opacity-90" />
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-                  <span
-                    className="flex h-12 w-12 items-center justify-center rounded-full"
-                    style={{ background: ACCENT }}
-                  >
-                    <Camera size={18} className="text-white" />
-                  </span>
+                <div className="relative aspect-[4/5] w-full overflow-hidden">
+                  {cover && (
+                    <img
+                      src={cover.src}
+                      alt={t.gallery.folderTitle}
+                      className="h-full w-full object-cover opacity-80 grayscale transition-all duration-700 ease-out group-hover:scale-[1.05] group-hover:opacity-100 group-hover:grayscale-0"
+                    />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+
+                  <div className="absolute left-5 top-5 flex items-center gap-2 rounded-full bg-black/40 px-3 py-1.5 backdrop-blur-sm">
+                    <Images size={15} style={{ color: ACCENT }} />
+                    <span className="text-xs font-semibold uppercase tracking-wider text-white/90">
+                      {GALLERY.length} {t.gallery.photos}
+                    </span>
+                  </div>
+
+                  <div className="absolute inset-x-0 bottom-0 p-6">
+                    <h3 className="text-2xl font-extrabold leading-tight text-white sm:text-3xl">
+                      {t.gallery.folderTitle}
+                    </h3>
+                    <span
+                      className="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold"
+                      style={{ color: ACCENT }}
+                    >
+                      {t.gallery.openFolder}{' '}
+                      <ChevronRight
+                        size={16}
+                        className="transition-transform duration-300 group-hover:translate-x-1"
+                      />
+                    </span>
+                  </div>
                 </div>
-                <div className="absolute inset-x-0 bottom-0 p-4 text-left">
-                  <p className="text-[11px] font-medium uppercase tracking-wider text-white/60">
-                    {t.categories[g.tag] || g.tag}
-                  </p>
-                  <p className="text-sm font-bold text-white">
-                    {lang === 'en' ? GALLERY_TITLE_EN[g.id] || g.title : g.title}
-                  </p>
-                </div>
+              </button>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="grid"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+            >
+              <div className="mb-8 flex items-center justify-between">
+                <button
+                  onClick={() => setFolderOpen(false)}
+                  className="inline-flex items-center gap-2 text-sm font-medium text-white/70 transition-colors hover:text-white"
+                >
+                  <ChevronLeft size={16} /> {t.gallery.back}
+                </button>
+                <span className="flex items-center gap-2 text-sm text-white/40">
+                  <Images size={15} /> {GALLERY.length} {t.gallery.photos}
+                </span>
               </div>
-            </motion.button>
-          ))}
-        </div>
+
+              <div className="masonry">
+                {GALLERY.map((g, i) => (
+                  <motion.button
+                    key={g.id}
+                    initial={{ opacity: 0, scale: 0.96 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5, delay: (i % 6) * 0.05 }}
+                    onClick={() => setIndex(i)}
+                    className="masonry-item group relative block w-full overflow-hidden rounded-2xl border border-white/5 bg-[#111111]"
+                  >
+                    <div
+                      className={`relative w-full overflow-hidden ${
+                        g.span === 'tall' ? 'aspect-[3/4]' : 'aspect-[4/3]'
+                      }`}
+                    >
+                      <img
+                        src={g.src}
+                        alt={g.title}
+                        loading="lazy"
+                        className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 transition-opacity duration-500 group-hover:opacity-90" />
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                        <span
+                          className="flex h-12 w-12 items-center justify-center rounded-full"
+                          style={{ background: ACCENT }}
+                        >
+                          <Camera size={18} className="text-white" />
+                        </span>
+                      </div>
+                      <div className="absolute inset-x-0 bottom-0 p-4 text-left">
+                        <p className="text-[11px] font-medium uppercase tracking-wider text-white/60">
+                          {t.categories[g.tag] || g.tag}
+                        </p>
+                        <p className="text-sm font-bold text-white">
+                          {lang === 'en' ? GALLERY_TITLE_EN[g.id] || g.title : g.title}
+                        </p>
+                      </div>
+                    </div>
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {open && (
