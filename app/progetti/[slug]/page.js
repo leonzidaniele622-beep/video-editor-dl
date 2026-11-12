@@ -153,6 +153,8 @@ export default function ProjectPage() {
                 />
               ) : (
                 <video
+                  key={project.slug}
+                  src={project.video || PROJECT_VIDEO}
                   className="h-full w-full object-cover"
                   controls
                   autoPlay
@@ -161,9 +163,8 @@ export default function ProjectPage() {
                   playsInline
                   poster={project.image}
                   preload="metadata"
-                >
-                  <source src={project.video || PROJECT_VIDEO} type="video/mp4" />
-                </video>
+                />
+
               )}
             </div>
           </motion.div>
