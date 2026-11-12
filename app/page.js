@@ -32,7 +32,7 @@ import {
 } from 'lucide-react'
 import {
   ACCENT,
-  CV_URL,
+  cvUrl,
   HERO_VIDEO,
   IMG,
   CONTACT,
@@ -52,7 +52,8 @@ import {
   fadeUp,
   scaleIn,
 } from '@/lib/portfolio'
-import { useLang, field, LANGS } from '@/lib/i18n'
+import { useLang, field } from '@/lib/i18n'
+import LangToggle from '@/components/LangToggle'
 
 /* =========================================================
    NAVBAR
@@ -66,28 +67,6 @@ const NAV_LINKS = [
   { key: 'skills', href: '#competenze' },
   { key: 'contact', href: '#contatti' },
 ]
-
-function LangToggle({ className = '' }) {
-  const { lang, setLang } = useLang()
-  return (
-    <div
-      className={`inline-flex items-center rounded-full border border-white/15 p-0.5 text-xs font-semibold ${className}`}
-    >
-      {LANGS.map((l) => (
-        <button
-          key={l}
-          onClick={() => setLang(l)}
-          className={`rounded-full px-2.5 py-1 uppercase transition-colors ${
-            lang === l ? 'text-white' : 'text-white/50 hover:text-white/80'
-          }`}
-          style={lang === l ? { background: ACCENT } : {}}
-        >
-          {l}
-        </button>
-      ))}
-    </div>
-  )
-}
 
 function Navbar() {
   const { t } = useLang()
@@ -188,7 +167,7 @@ function Navbar() {
    HERO
    ========================================================= */
 function Hero() {
-  const { t } = useLang()
+  const { t, lang } = useLang()
   const ref = useRef(null)
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -280,7 +259,7 @@ function Hero() {
             {t.hero.ctaContact}
           </a>
           <a
-            href={CV_URL}
+            href={cvUrl(lang)}
             download
             className="inline-flex items-center gap-2 rounded-full border border-white/20 px-8 py-4 text-sm font-semibold text-white transition-colors duration-300 hover:bg-white/5"
           >
@@ -1146,7 +1125,7 @@ function ContactForm() {
 }
 
 function Contact() {
-  const { t } = useLang()
+  const { t, lang } = useLang()
   return (
     <section id="contatti" className="relative py-28">
       <div className="mx-auto max-w-5xl px-6 text-center lg:px-10">
@@ -1193,7 +1172,7 @@ function Contact() {
             <Linkedin size={18} /> {t.contact.linkedin}
           </a>
           <a
-            href={CV_URL}
+            href={cvUrl(lang)}
             download
             className="inline-flex items-center gap-2 rounded-full border border-white/20 px-8 py-4 text-sm font-semibold text-white transition-colors duration-300 hover:bg-white/5"
           >

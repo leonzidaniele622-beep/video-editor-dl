@@ -15,6 +15,7 @@ import {
   CATEGORY_ICON,
 } from '@/lib/portfolio'
 import { useLang } from '@/lib/i18n'
+import LangToggle from '@/components/LangToggle'
 
 function InstagramEmbeds({ items }) {
   useEffect(() => {
@@ -95,12 +96,15 @@ export default function ProjectPage() {
             <span className="text-2xl font-extrabold tracking-tight">DL</span>
             <span className="h-2 w-2 rounded-full" style={{ background: ACCENT }} />
           </Link>
-          <Link
-            href="/#portfolio"
-            className="inline-flex items-center gap-2 text-sm font-medium text-white/70 transition-colors hover:text-white"
-          >
-            <ArrowLeft size={16} /> {t.project.portfolio}
-          </Link>
+          <div className="flex items-center gap-4 sm:gap-6">
+            <LangToggle />
+            <Link
+              href="/#portfolio"
+              className="inline-flex items-center gap-2 text-sm font-medium text-white/70 transition-colors hover:text-white"
+            >
+              <ArrowLeft size={16} /> {t.project.portfolio}
+            </Link>
+          </div>
         </div>
       </header>
 
