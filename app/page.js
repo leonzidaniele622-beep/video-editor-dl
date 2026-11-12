@@ -38,13 +38,13 @@ import {
   CONTACT,
   CATEGORIES,
   CATEGORY_ORDER,
-  CATEGORY_LABEL,
-  CATEGORY_LABEL_EN,
+  categoryLabelFor,
+  projectTitle,
+  galleryTitle,
   CATEGORY_COVER,
   CATEGORY_ICON,
   PROJECTS,
   GALLERY,
-  GALLERY_TITLE_EN,
   SMM,
   EXPERIENCES,
   SOFTWARE,
@@ -52,7 +52,7 @@ import {
   fadeUp,
   scaleIn,
 } from '@/lib/portfolio'
-import { useLang, field } from '@/lib/i18n'
+import { useLang, field, LANGS } from '@/lib/i18n'
 
 /* =========================================================
    NAVBAR
@@ -73,7 +73,7 @@ function LangToggle({ className = '' }) {
     <div
       className={`inline-flex items-center rounded-full border border-white/15 p-0.5 text-xs font-semibold ${className}`}
     >
-      {['it', 'en'].map((l) => (
+      {LANGS.map((l) => (
         <button
           key={l}
           onClick={() => setLang(l)}
@@ -348,10 +348,7 @@ function SectionHeader({ eyebrow, title, description }) {
    ========================================================= */
 function Portfolio() {
   const { t, lang } = useLang()
-  const catLabel = (c) =>
-    lang === 'en'
-      ? CATEGORY_LABEL_EN[c] || t.categories[c] || c
-      : CATEGORY_LABEL[c] || c
+  const catLabel = (c) => categoryLabelFor(c, lang, t)
   const catName = (c) => t.categories[c] || c
   const [openCat, setOpenCat] = useState(null)
   const cats = CATEGORY_ORDER.filter((c) =>
@@ -478,7 +475,7 @@ function Portfolio() {
                         >
                           <img
                             src={p.image}
-                            alt={p.title}
+                            alt={projectTitle(p, lang)}
                             loading="lazy"
                             className="h-full w-full object-cover grayscale transition-all duration-700 ease-out group-hover:grayscale-0 group-hover:scale-[1.06]"
                           />
@@ -497,7 +494,7 @@ function Portfolio() {
                               {catName(p.category)}
                             </div>
                             <h3 className="mt-1 text-lg font-bold leading-snug text-white">
-                              {p.title}
+                              {projectTitle(p, lang)}
                             </h3>
                           </div>
                         </div>
@@ -592,7 +589,7 @@ function GalleryLightbox({ index, onClose, onPrev, onNext }) {
               {t.categories[item.tag] || item.tag}
             </p>
             <p className="text-lg font-bold text-white">
-              {lang === 'en' ? GALLERY_TITLE_EN[item.id] || item.title : item.title}
+              {galleryTitle(item, lang)}
             </p>
           </div>
         </motion.div>
@@ -724,7 +721,7 @@ function Gallery() {
                           {t.categories[g.tag] || g.tag}
                         </p>
                         <p className="text-sm font-bold text-white">
-                          {lang === 'en' ? GALLERY_TITLE_EN[g.id] || g.title : g.title}
+                          {galleryTitle(g, lang)}
                         </p>
                       </div>
                     </div>
