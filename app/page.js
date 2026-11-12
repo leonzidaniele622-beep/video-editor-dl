@@ -1040,31 +1040,20 @@ function ContactForm() {
   const onChange = (e) =>
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }))
 
-  const submit = async (e) => {
+  const submit = (e) => {
     e.preventDefault()
     if (!form.name || !form.email || !form.message) {
       toast.error(t.form.fillAll)
       return
     }
     setLoading(true)
-    try {
-      const res = await fetch('/api/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      })
-      const data = await res.json()
-      if (res.ok) {
-        toast.success(t.form.success)
-        setForm({ name: '', email: '', message: '' })
-      } else {
-        toast.error(data.error || t.form.errorSend)
-      }
-    } catch (err) {
-      toast.error(t.form.errorNet)
-    } finally {
-      setLoading(false)
-    }
+    const subject = `${t.form.subject} — ${form.name}`
+    const body = `${form.message}\n\n— ${form.name}\n${form.email}`
+    window.location.href = `mailto:${CONTACT.email}?subject=${encodeURIComponent(
+      subject
+    )}&body=${encodeURIComponent(body)}`
+    toast.success(t.form.success)
+    setTimeout(() => setLoading(false), 1500)
   }
 
   const inputCls =
@@ -1120,6 +1109,7 @@ function ContactForm() {
           </>
         )}
       </button>
+      <p className="text-xs text-white/40">{t.form.note}</p>
     </motion.form>
   )
 }
